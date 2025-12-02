@@ -3,8 +3,9 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"strconv"
 	"strings"
+
+	"github.com/tlaceby/aoc/helpers"
 )
 
 //go:embed input.txt
@@ -68,11 +69,9 @@ func createIDRanges() []Range {
 
 	for _, idRange := range strings.Split(input, ",") {
 		spread := strings.Split(idRange, "-")
-		low, _ := strconv.Atoi(spread[0])
-		high, _ := strconv.Atoi(spread[1])
 		ranges = append(ranges, Range{
-			Low:  low,
-			High: high,
+			Low:  helpers.Aoti(spread[0]),
+			High: helpers.Aoti(spread[1]),
 		})
 	}
 
