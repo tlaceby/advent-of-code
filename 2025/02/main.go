@@ -70,8 +70,8 @@ func createIDRanges() []Range {
 	for _, idRange := range strings.Split(input, ",") {
 		spread := strings.Split(idRange, "-")
 		ranges = append(ranges, Range{
-			Low:  helpers.Aoti(spread[0]),
-			High: helpers.Aoti(spread[1]),
+			Low:  helpers.Atoi(spread[0]),
+			High: helpers.Atoi(spread[1]),
 		})
 	}
 

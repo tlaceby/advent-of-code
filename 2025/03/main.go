@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"strings"
 
 	"github.com/tlaceby/aoc/helpers"
 )
@@ -11,38 +10,43 @@ import (
 //go:embed input.txt
 var input string
 
+const MAX_DIGITS = 12
+
 func main() {
 	sum := 0
 	banks := helpers.SplitNewLine(input)
 	for _, line := range banks {
-		h1, h2 := getHighestJolts(line)
-		f := helpers.Aoti(h1 + h2)
-		fmt.Printf("%s ---> (%s, %s) => %d\n", line, h1, h2, f)
-		sum += f
+		jolt := computeJolt(line)
+		fmt.Printf("Line: %s -> Jolt: %d\n", line, jolt)
+		sum += jolt
 	}
 
 	fmt.Printf("Sum: %d\n", sum)
 }
 
-func getHighestJolts(bank string) (string, string) {
-	voltages := strings.Split(bank, "")
-	highestVoltagePairs := [2]string{"", ""}
-	highestVoltage := -10000
+// pick the largest digit in order using a greedy aproach
+func computeJolt(bank string) int {
+	digits := []byte(bank)
+	pairs := make([]byte, MAX_DIGITS)
+	firstChoiceIndex := 0
 
-	for i := range len(voltages) - 1 {
-		v1 := voltages[i]
-		for j := i + 1; j < len(voltages); j++ {
-			v2 := voltages[j]
+	for pos := range MAX_DIGITS {
+		// if pos = 0, then last choice MUST leave room for MAX_DIGITS for future selections
+		// if pos = MAX_DIGITS - 1, then it will point to the index of the last digit in the digits[]
+		lastChoiceIndex := len(digits) - MAX_DIGITS + pos
+		bestIndex := firstChoiceIndex
+		bestDigit := digits[firstChoiceIndex]
 
-			totalVoltageStr := v1 + v2
-			totalVoltage := helpers.Aoti(totalVoltageStr)
-			if totalVoltage > highestVoltage {
-				highestVoltage = totalVoltage
-				highestVoltagePairs[0] = v1
-				highestVoltagePairs[1] = v2
+		for i := firstChoiceIndex; i <= lastChoiceIndex; i++ {
+			if digits[i] > bestDigit {
+				bestDigit = digits[i]
+				bestIndex = i
 			}
 		}
+
+		pairs[pos] = bestDigit
+		firstChoiceIndex = bestIndex + 1
 	}
 
-	return highestVoltagePairs[0], highestVoltagePairs[1]
+	return helpers.Atoi(string(pairs))
 }

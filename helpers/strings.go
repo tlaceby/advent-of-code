@@ -9,7 +9,7 @@ func SplitNewLine(input string) []string {
 	return strings.Split(input, "\n")
 }
 
-func Aoti(str string) int {
+func Atoi(str string) int {
 	val, _ := strconv.Atoi(str)
 	return val
 }
