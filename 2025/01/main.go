@@ -26,29 +26,28 @@ func main() {
 	fmt.Printf("\nCounted %d times the dial pointed at 0\n", zeroCounts)
 }
 
-func computeMove(dial int, offset int) (int, int) {
-	passedZeroCount := 0
-	currentPos := dial
+// 10 L200 -> -190
+// 6616
+func computeMove(dial int, turn int) (int, int) {
+	d := helpers.Ternary(turn > 0, 100, -100)
+	div, mod := turn/d, turn%d
 
-	for i := 0; i < helpers.AbsInt(offset); i++ {
-		if offset > 0 {
-			currentPos++
-			if currentPos > 99 {
-				currentPos = 0
-			}
-		} else {
-			currentPos--
-			if currentPos < 0 {
-				currentPos = 99
-			}
+	count := div
+	spread := dial + mod
+
+	if turn < 0 {
+		if dial != 0 && spread <= 0 {
+			count += 1
 		}
-
-		if currentPos == 0 {
-			passedZeroCount++
+	} else {
+		if spread >= 100 {
+			count += 1
 		}
 	}
 
-	return currentPos, passedZeroCount
+	dial = (dial + turn) % 100
+	count = helpers.Ternary(dial == 0, count+1, count)
+	return dial, count
 }
 
 func computeMoveOffset(command string) int {
