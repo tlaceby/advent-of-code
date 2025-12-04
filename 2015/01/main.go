@@ -13,8 +13,12 @@ var input string
 
 func main() {
 	floor := 0
-	for _, ch := range strings.Split(input, "") {
+	for indx, ch := range strings.Split(input, "") {
 		floor += helpers.Ternary(ch == "(", 1, -1)
+		if floor == -1 {
+			fmt.Printf("entered basement at %d\n", indx+1)
+			return
+		}
 	}
 
 	fmt.Printf("Floor: %d\n", floor)
