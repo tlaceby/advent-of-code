@@ -8,27 +8,42 @@ import (
 
 //go:embed input.txt
 var input string
-var rows []string
 var width int
 var height int
+var grid [][]byte
 
 func main() {
-	count := 0
-	rows = strings.Split(input, "\n")
+	rows := strings.Split(input, "\n")
 	height = len(rows)
 	width = len(rows[0])
 
+	for _, r := range rows {
+		gridRow := []byte(r)
+		grid = append(grid, gridRow)
+	}
+
+	removedCount := 0
+
 	fmt.Printf("width: %d, height: %d\n\n", width, height)
-	for y := range height {
-		for x := range height {
-			adjacentRolls := getAdjacentCount(x, y)
-			if adjacentRolls < 4 && rows[y][x] == '@' {
-				count++
+
+	for {
+		countBefore := removedCount
+		for y := range height {
+			for x := range height {
+				adjacentRolls := getAdjacentCount(x, y)
+				if adjacentRolls < 4 && grid[y][x] == '@' {
+					removedCount += 1
+					grid[y][x] = 'x'
+				}
 			}
+		}
+
+		if countBefore == removedCount {
+			break
 		}
 	}
 
-	fmt.Printf("Total count: %d\n", count)
+	fmt.Printf("Removed count: %d\n", removedCount)
 }
 
 func getAdjacentCount(x, y int) int {
@@ -40,7 +55,7 @@ func getAdjacentCount(x, y int) int {
 				continue
 			}
 
-			char := rows[y-1][i]
+			char := grid[y-1][i]
 			if char == '@' {
 				count++
 			}
@@ -48,12 +63,13 @@ func getAdjacentCount(x, y int) int {
 	}
 
 	// left
-	if x-1 >= 0 && rows[y][x-1] == '@' {
+	if x-1 >= 0 && grid[y][x-1] == '@' {
 		count++
 	}
 
 	// right
-	if x+1 < width && rows[y][x+1] == '@' {
+
+	if x+1 < width && grid[y][x+1] == '@' {
 		count++
 	}
 
@@ -64,7 +80,7 @@ func getAdjacentCount(x, y int) int {
 				continue
 			}
 
-			char := rows[y+1][i]
+			char := grid[y+1][i]
 			if char == '@' {
 				count++
 			}
